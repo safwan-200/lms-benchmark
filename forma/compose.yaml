@@ -1,0 +1,22 @@
+services:
+  database:
+    image: mariadb:10.11
+    restart: unless-stopped
+    environment:
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MARIADB_DATABASE: formalms
+      MARIADB_USER: formalms
+      MARIADB_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - forma_db:/var/lib/mysql
+
+  forma:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "8081:80"
+    depends_on:
+      - database
+
+volumes:
+  forma_db:

@@ -1,0 +1,40 @@
+
+services:
+  database:
+    image: mariadb:10.11
+    restart: unless-stopped
+    environment:
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MARIADB_DATABASE: moodle
+      MARIADB_USER: moodle
+      MARIADB_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - db_data:/var/lib/mysql
+
+  moodle:
+    image: oksigenia/moodle:4.5
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      MOODLE_DATABASE_TYPE: mariadb
+      MOODLE_DATABASE_HOST: database
+      MOODLE_DATABASE_PORT_NUMBER: 3306
+      MOODLE_DATABASE_NAME: moodle
+      MOODLE_DATABASE_USER: moodle
+      MOODLE_DATABASE_PASSWORD: ${DB_PASSWORD}
+      MOODLE_USERNAME: admin
+      MOODLE_PASSWORD: ${MOODLE_ADMIN_PASSWORD}
+      MOODLE_EMAIL: admin@example.com
+      MOODLE_SITE_NAME: DevOps Training LMS
+    volumes:
+      - moodle_data:/bitnami/moodle
+      - moodle_files:/bitnami/moodledata
+    depends_on:
+      - database
+
+volumes:
+  db_data:
+  moodle_data:
+  moodle_files:
+
